@@ -121,7 +121,7 @@ export default function LunarHeader({ summaryData, cycleLength = 28 }) {
   return (
     <header className="header-container">
       <img 
-        src="/lunaflow_icon.png" 
+        src={`${import.meta.env.BASE_URL}lunaflow_icon.png`}
         alt="LunaFlow Icon" 
         style={{ 
           width: '34px', 

@@ -413,7 +413,7 @@ export default function App() {
 
           <div style={{ textAlign: 'center', padding: '20px 0', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
             <img 
-              src="/lunaflow_icon.png" 
+              src={`${import.meta.env.BASE_URL}lunaflow_icon.png`}
               alt="LunaFlow Logo" 
               style={{ 
                 width: '64px', 
