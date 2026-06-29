@@ -1,10 +1,10 @@
 const CACHE_NAME = 'lunaflow-cache-v1';
 const ASSETS_TO_CACHE = [
-  '/',
-  '/index.html',
-  '/manifest.json',
-  '/icons/icon-192.svg',
-  '/icons/icon-512.svg'
+  './',
+  'index.html',
+  'manifest.json',
+  'icons/icon-192.svg',
+  'icons/icon-512.svg'
 ];
 
 // Install Service Worker
