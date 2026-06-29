@@ -63,6 +63,14 @@ export const LogIcon = ({ size = 24, color = 'currentColor' }) => (
   </svg>
 );
 
+// Crescent Moon Icon for Knowledge Tab
+export const CrescentIcon = ({ size = 24, color = 'currentColor' }) => (
+  <svg {...iconProps(size, color)}>
+    <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
+  </svg>
+);
+
+
 // Flow Level SVG: Drop
 export const FlowDropIcon = ({ size = 24, level = 'medium', active = false }) => {
   let scale = 0.7;
