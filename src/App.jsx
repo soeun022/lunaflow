@@ -3,7 +3,8 @@ import LunarHeader from './components/LunarHeader';
 import Calendar from './components/Calendar';
 import DayDetailDrawer from './components/DayDetailDrawer';
 import Insights from './components/Insights';
-import { CalendarIcon, InsightsIcon, LogIcon, PlusIcon } from './components/SvgIcons';
+import Knowledge from './components/Knowledge';
+import { CalendarIcon, InsightsIcon, LogIcon, PlusIcon, CrescentIcon } from './components/SvgIcons';
 import { 
   formatDate, 
   calculateCycleStatsAndPredictions, 
@@ -181,6 +182,24 @@ export default function App() {
     actualPeriods: [],
     predictions: { periodRanges: [], fertileRanges: [], ovulationDates: [] }
   });
+  const [showSplash, setShowSplash] = useState(true);
+  const [fadeSplash, setFadeSplash] = useState(false);
+
+  // Splash screen timeout handler
+  useEffect(() => {
+    const fadeTimer = setTimeout(() => {
+      setFadeSplash(true);
+    }, 900); // Start fade-out after 900ms
+
+    const removeTimer = setTimeout(() => {
+      setShowSplash(false);
+    }, 1300); // Completely unmount after transition completes (400ms transition)
+
+    return () => {
+      clearTimeout(fadeTimer);
+      clearTimeout(removeTimer);
+    };
+  }, []);
 
   // 2. Load logs from LocalStorage on mount
   useEffect(() => {
@@ -301,6 +320,19 @@ export default function App() {
 
   return (
     <>
+      {showSplash && (
+        <div className={`splash-screen ${fadeSplash ? 'splash-fade-out' : ''}`}>
+          <div className="splash-content">
+            <img 
+              src={`${import.meta.env.BASE_URL}lunaflow_icon.png`} 
+              alt="LunaFlow Logo" 
+              className="splash-logo"
+            />
+            <h1 className="splash-title">LunaFlow</h1>
+          </div>
+        </div>
+      )}
+
       {/* Background glowing decorations */}
       <div className="ambient-bg">
         <div className="blob-1" />
@@ -351,6 +383,10 @@ export default function App() {
 
       {activeTab === 'insights' && (
         <Insights logs={logs} stats={stats} />
+      )}
+
+      {activeTab === 'knowledge' && (
+        <Knowledge />
       )}
 
       {activeTab === 'settings' && (
@@ -457,6 +493,14 @@ export default function App() {
         >
           <InsightsIcon size={20} />
           <span>趨勢</span>
+        </button>
+
+        <button 
+          className={`nav-tab ${activeTab === 'knowledge' ? 'nav-tab-active' : ''}`}
+          onClick={() => setActiveTab('knowledge')}
+        >
+          <CrescentIcon size={20} />
+          <span>月知識</span>
         </button>
         
         <button 

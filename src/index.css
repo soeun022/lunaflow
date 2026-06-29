@@ -454,7 +454,7 @@ button {
   -webkit-backdrop-filter: blur(20px);
   border-top: 1px solid var(--panel-border);
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   z-index: 10;
 }
 
@@ -1375,3 +1375,105 @@ input:checked + .toggle-slider:before {
   color: var(--text-slate-muted);
   line-height: 1.4;
 }
+
+/* Custom premium range slider */
+.custom-range-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 8px;
+  background: rgba(91, 99, 122, 0.08); /* Soft slate track */
+  border-radius: 4px;
+  outline: none;
+  margin: 12px 0;
+  cursor: pointer;
+}
+
+/* Chrome, Safari, Opera and Edge */
+.custom-range-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 26px;
+  height: 26px;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23DBB57F'><path d='M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z'/></svg>");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  margin-top: -9px; /* Centering align (26px height thumb vs 8px track: (26-8)/2 = 9px offset) */
+}
+
+/* Firefox */
+.custom-range-slider::-moz-range-thumb {
+  width: 26px;
+  height: 26px;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23DBB57F'><path d='M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z'/></svg>");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+/* Splash Screen Animation Styles */
+.splash-screen {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--bg-gradient);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  transition: opacity 0.4s ease-out, visibility 0.4s;
+  opacity: 1;
+  visibility: visible;
+  border-radius: inherit;
+}
+
+.splash-fade-out {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.splash-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  animation: splashScaleIn 0.8s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
+}
+
+.splash-logo {
+  width: 96px;
+  height: 96px;
+  border-radius: 24px;
+  box-shadow: 0 12px 36px rgba(91, 99, 122, 0.15);
+}
+
+.splash-title {
+  font-family: var(--font-family);
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--text-slate);
+  letter-spacing: 0.05em;
+  margin: 0;
+}
+
+@keyframes splashScaleIn {
+  0% {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
