@@ -103,8 +103,8 @@ export default function Insights({ logs, stats }) {
               <rect x="18" y="12" width="3" height="6" rx="1" fill="rgba(91, 99, 122, 0.1)" stroke="var(--neutral-mist)" strokeWidth="1.5" />
             </svg>
           </div>
-          <h3 className="card-title" style={{ marginBottom: '8px', fontSize: '16px' }}>尚未累積足夠數據</h3>
-          <p style={{ fontSize: '13px', color: 'var(--text-slate-light)', lineHeight: '1.6' }}>
+          <h3 className="card-title" style={{ marginBottom: '8px', fontSize: '17.5px' }}>尚未累積足夠數據</h3>
+          <p style={{ fontSize: '14.5px', color: 'var(--text-slate-light)', lineHeight: '1.6' }}>
             請在月曆上選擇日期，並點擊下方「記錄今日生理狀態」按鈕，開始輸入您的月經來潮日。系統將在有記錄後，為您分析平均長度與歷史規律性。
           </p>
         </div>
@@ -199,8 +199,8 @@ export default function Insights({ logs, stats }) {
         <div className="history-cycle-card" style={{ marginBottom: '20px', cursor: 'default' }}>
           <div className="history-cycle-header" style={{ borderBottom: '1px solid rgba(91, 99, 122, 0.08)', paddingBottom: '10px', marginBottom: '8px' }}>
             <div className="history-cycle-meta">
-              <h4 className="history-cycle-title" style={{ fontSize: '18px' }}>{activeCycleDetail.title}</h4>
-              <span className="history-cycle-dates" style={{ fontSize: '13px' }}>{activeCycleDetail.subtitle}</span>
+              <h4 className="history-cycle-title" style={{ fontSize: '19.5px' }}>{activeCycleDetail.title}</h4>
+              <span className="history-cycle-dates" style={{ fontSize: '14.5px' }}>{activeCycleDetail.subtitle}</span>
             </div>
             {activeCycleDetail.isOngoing && (
               <span style={{
@@ -208,7 +208,7 @@ export default function Insights({ logs, stats }) {
                 color: 'var(--text-slate)',
                 padding: '4px 8px',
                 borderRadius: '8px',
-                fontSize: '11px',
+                fontSize: '12.5px',
                 fontWeight: '700'
               }}>
                 進行中
@@ -249,7 +249,7 @@ export default function Insights({ logs, stats }) {
             <div className="insight-grid-2" style={{ marginBottom: '20px' }}>
               <div className="stat-box">
                 <span className="stat-lbl">月經長度</span>
-                <span className="stat-val" style={{ fontSize: '20px', fontWeight: '800' }}>{periodLength} 天</span>
+                <span className="stat-val" style={{ fontSize: '21.5px', fontWeight: '800' }}>{periodLength} 天</span>
                 <span className="stat-sub" style={{ 
                   color: 'var(--text-slate)',
                   fontWeight: '600',
@@ -269,7 +269,7 @@ export default function Insights({ logs, stats }) {
               </div>
               <div className="stat-box">
                 <span className="stat-lbl">週期長度</span>
-                <span className="stat-val" style={{ fontSize: '20px', fontWeight: '800' }}>{activeCycleDetail.length} 天</span>
+                <span className="stat-val" style={{ fontSize: '21.5px', fontWeight: '800' }}>{activeCycleDetail.length} 天</span>
                 <span className="stat-sub" style={{ 
                   color: 'var(--text-slate)',
                   fontWeight: '600',
@@ -293,7 +293,7 @@ export default function Insights({ logs, stats }) {
 
         {/* Details timeline card */}
         <div className="insight-card-full" style={{ padding: '20px 16px' }}>
-          <h3 className="card-title" style={{ marginBottom: '18px', fontSize: '16px' }}>週期事件分析</h3>
+          <h3 className="card-title" style={{ marginBottom: '18px', fontSize: '17.5px' }}>週期事件分析</h3>
           
           <div className="cycle-timeline-list">
             
@@ -494,7 +494,7 @@ export default function Insights({ logs, stats }) {
                         x={pt.x} 
                         y={pt.y - 12} 
                         textAnchor="middle" 
-                        fontSize="11px" 
+                        fontSize="12.5px" 
                         fontWeight="800" 
                         fill="var(--text-slate)"
                       >
@@ -516,7 +516,7 @@ export default function Insights({ logs, stats }) {
                         x={pt.x} 
                         y={height - 8} 
                         textAnchor="middle" 
-                        fontSize="10px" 
+                        fontSize="11.5px" 
                         fontWeight="600" 
                         fill="var(--text-slate-light)"
                       >
@@ -529,7 +529,7 @@ export default function Insights({ logs, stats }) {
             );
           } else {
             return (
-              <div style={{ textAlign: 'center', padding: '24px 0', color: 'var(--text-slate-muted)', fontSize: '13px' }}>
+              <div style={{ textAlign: 'center', padding: '24px 0', color: 'var(--text-slate-muted)', fontSize: '14.5px' }}>
                 需要至少兩次生理期紀錄，以計算並分析週期長度趨勢。
               </div>
             );
@@ -542,7 +542,7 @@ export default function Insights({ logs, stats }) {
         <h3 className="card-title" style={{ marginBottom: '16px' }}>生理期歷史紀錄</h3>
         
         {/* Dot Legend */}
-        <div style={{ display: 'flex', gap: '14px', flexWrap: 'wrap', marginBottom: '20px', fontSize: '11px', fontWeight: '700', color: 'var(--text-slate-light)' }}>
+        <div style={{ display: 'flex', gap: '14px', flexWrap: 'wrap', marginBottom: '20px', fontSize: '12.5px', fontWeight: '700', color: 'var(--text-slate-light)' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
             <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#5B637A' }} />
             <span>經期</span>
@@ -585,7 +585,7 @@ export default function Insights({ logs, stats }) {
                     margin: '20px 0 10px 0'
                   }}
                 >
-                  <span style={{ fontSize: '20px', fontWeight: '800', color: 'var(--text-slate)' }}>
+                  <span style={{ fontSize: '21.5px', fontWeight: '800', color: 'var(--text-slate)' }}>
                     {yr}
                   </span>
                   <svg 

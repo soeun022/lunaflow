@@ -1,10 +1,11 @@
 const CACHE_NAME = 'lunaflow-cache-v1';
 const ASSETS_TO_CACHE = [
-  '/',
-  '/index.html',
-  '/manifest.json',
-  '/icons/icon-192.svg',
-  '/icons/icon-512.svg'
+  './',
+  'index.html',
+  'manifest.json',
+  'icons/icon-192.png',
+  'icons/icon-512.png',
+  'icons/icon-180.png'
 ];
 
 // Install Service Worker
@@ -61,7 +62,7 @@ self.addEventListener('fetch', (event) => {
           }
           // If offline and request is for page, return cached index
           if (event.request.mode === 'navigate') {
-            return caches.match('/');
+            return caches.match('./') || caches.match('index.html');
           }
           return new Response('Offline content not available', {
             status: 503,

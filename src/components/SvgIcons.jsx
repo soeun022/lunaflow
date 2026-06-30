@@ -41,27 +41,91 @@ export const PlusIcon = ({ size = 24, color = 'currentColor' }) => (
 );
 
 // Calendar Icon for Nav
-export const CalendarIcon = ({ size = 24, color = 'currentColor' }) => (
-  <svg {...iconProps(size, color)}>
-    <path d="M8 2v4M16 2v4M3 10h18" />
-    <rect width="18" height="18" x="3" y="4" rx="2" />
+export const CalendarIcon = ({ size = 24, color = 'currentColor', active = false }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+    {active ? (
+      // Filled: only the top header area is filled, body is transparent
+      <>
+        {/* Filled header strip (y=4 to y=11, slightly past divider to cover the rounded corners) */}
+        <rect x="3" y="4" width="18" height="7" rx="2" fill={color} stroke="none" />
+        {/* Full calendar outline */}
+        <rect width="18" height="18" x="3" y="4" rx="2" fill="none" stroke={color} strokeWidth={2} />
+        {/* Divider line */}
+        <path d="M3 10h18" strokeWidth={1.5} />
+        {/* Binding pins */}
+        <path d="M8 2v4M16 2v4" strokeWidth={2} />
+      </>
+    ) : (
+      // Outline
+      <>
+        <path d="M8 2v4M16 2v4M3 10h18" />
+        <rect width="18" height="18" x="3" y="4" rx="2" />
+      </>
+    )}
   </svg>
 );
 
 // Chart/Trends Icon for Nav
-export const InsightsIcon = ({ size = 24, color = 'currentColor' }) => (
-  <svg {...iconProps(size, color)}>
-    <path d="M3 3v18h18" />
-    <path d="m19 9-5 5-4-4-3 3" />
+export const InsightsIcon = ({ size = 24, color = 'currentColor', active = false }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+    {active ? (
+      // Filled: area under the line chart filled in
+      <>
+        <path d="M3 3v18h18" />
+        <path d="m19 9-5 5-4-4-3 3" strokeWidth="2.5" />
+        <path d="M7 13l-4 4V21h18V9l-5 5-4-4z" fill={color} opacity="0.25" stroke="none" />
+      </>
+    ) : (
+      <>
+        <path d="M3 3v18h18" />
+        <path d="m19 9-5 5-4-4-3 3" />
+      </>
+    )}
   </svg>
 );
 
 // Log/Plus Pen Icon for Nav
 export const LogIcon = ({ size = 24, color = 'currentColor' }) => (
-  <svg {...iconProps(size, color)}>
+  <svg {...{width:size,height:size,viewBox:'0 0 24 24',fill:'none',stroke:color,strokeWidth:2,strokeLinecap:'round',strokeLinejoin:'round'}}>
     <path d="M12 20h9M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z" />
   </svg>
 );
+
+// Crescent Moon Icon for Knowledge Tab
+export const CrescentIcon = ({ size = 24, color = 'currentColor', active = false }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+    {active ? (
+      // Filled solid moon
+      <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" fill={color} stroke={color} />
+    ) : (
+      <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
+    )}
+  </svg>
+);
+
+// Gear / Settings Icon for Settings Tab
+export const GearIcon = ({ size = 24, color = 'currentColor', active = false }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+    {active ? (
+      // Filled gear with true hollow center via evenodd compound path
+      <path
+        fillRule="evenodd"
+        fill={color}
+        stroke={color}
+        strokeWidth={2}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.1a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z M15 12a3 3 0 1 0-6 0a3 3 0 1 0 6 0z"
+      />
+    ) : (
+      <>
+        <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.1a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" />
+        <circle cx="12" cy="12" r="3" />
+      </>
+    )}
+  </svg>
+);
+
 
 // Flow Level SVG: Drop
 export const FlowDropIcon = ({ size = 24, level = 'medium', active = false }) => {

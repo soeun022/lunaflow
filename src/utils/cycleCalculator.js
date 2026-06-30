@@ -222,7 +222,7 @@ export function getCycleSummary(targetDateStr, logs, stats) {
       phase: 'welcoming',
       phaseName: '歡迎使用',
       daysDifference: 0,
-      summary: '請點擊下方按鈕，記錄您的最近一次月經開始日，開啟月相追蹤。'
+      summary: '請點擊下方按鈕，記錄您的最近一次月經開始日，開啟月經追蹤。'
     };
   }
 

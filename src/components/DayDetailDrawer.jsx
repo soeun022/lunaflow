@@ -106,6 +106,18 @@ export default function DayDetailDrawer({
     }
   }, [dateStr, logs]);
 
+  // Lock background scroll when drawer is open to prevent scroll chain locks on iOS
+  useEffect(() => {
+    const rootEl = document.getElementById('root');
+    if (rootEl) {
+      const originalOverflow = rootEl.style.overflowY;
+      rootEl.style.overflowY = 'hidden';
+      return () => {
+        rootEl.style.overflowY = originalOverflow;
+      };
+    }
+  }, []);
+
   // Handlers
   const handleFlowSelect = (flowLevel) => {
     setForm(prev => ({ ...prev, flow: flowLevel }));
@@ -343,7 +355,7 @@ export default function DayDetailDrawer({
                   padding: '8px 12px',
                   borderRadius: '12px',
                   border: '1px solid rgba(91, 99, 122, 0.2)',
-                  fontSize: '13px',
+                  fontSize: '14.5px',
                   background: 'rgba(255, 255, 255, 0.45)',
                   outline: 'none',
                   color: 'var(--text-slate)'
@@ -358,7 +370,7 @@ export default function DayDetailDrawer({
                 style={{ 
                   padding: '8px 0', 
                   borderRadius: '12px', 
-                  fontSize: '13px', 
+                  fontSize: '14.5px', 
                   fontWeight: '600',
                   width: '65px', 
                   textAlign: 'center',
@@ -376,7 +388,7 @@ export default function DayDetailDrawer({
                 style={{ 
                   padding: '8px 0', 
                   borderRadius: '12px', 
-                  fontSize: '13px', 
+                  fontSize: '14.5px', 
                   fontWeight: '600',
                   width: '65px', 
                   textAlign: 'center',
@@ -489,7 +501,7 @@ export default function DayDetailDrawer({
               borderRadius: '16px',
               border: '1px solid rgba(91, 99, 122, 0.15)',
               background: 'rgba(255, 255, 255, 0.4)',
-              fontSize: '13px',
+              fontSize: '14.5px',
               color: 'var(--text-slate)',
               fontFamily: 'inherit',
               resize: 'none',

@@ -72,7 +72,7 @@ const MoonPhaseSvg = ({ cycleDay, cycleLength = 28 }) => {
         <circle cx="40" cy="40" r="31" fill="none" stroke="#D5CCC5" strokeWidth="1.5" opacity="0.6" />
       </svg>
       <span style={{ 
-        fontSize: '9px', 
+        fontSize: '10.5px', 
         fontWeight: '700', 
         color: 'var(--text-slate-muted)', 
         letterSpacing: '0.02em',

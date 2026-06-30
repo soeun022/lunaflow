@@ -3,7 +3,8 @@ import LunarHeader from './components/LunarHeader';
 import Calendar from './components/Calendar';
 import DayDetailDrawer from './components/DayDetailDrawer';
 import Insights from './components/Insights';
-import { CalendarIcon, InsightsIcon, LogIcon, PlusIcon } from './components/SvgIcons';
+import Knowledge from './components/Knowledge';
+import { CalendarIcon, InsightsIcon, LogIcon, PlusIcon, CrescentIcon, GearIcon } from './components/SvgIcons';
 import { 
   formatDate, 
   calculateCycleStatsAndPredictions, 
@@ -120,7 +121,7 @@ function LoggedDetailsSummary({ log, onEditClick }) {
               border: '1px solid rgba(91, 99, 122, 0.1)',
               borderRadius: '10px',
               padding: '4px 10px',
-              fontSize: '11px',
+              fontSize: '12.5px',
               fontWeight: '600',
               color: 'var(--text-slate)',
               display: 'flex',
@@ -145,7 +146,7 @@ function LoggedDetailsSummary({ log, onEditClick }) {
           background: 'rgba(255, 255, 255, 0.22)', 
           border: '1px solid rgba(91, 99, 122, 0.06)',
           borderRadius: '14px',
-          fontSize: '12px',
+          fontSize: '13.5px',
           color: 'var(--text-slate)',
           lineHeight: '1.5',
           textAlign: 'left',
@@ -154,7 +155,7 @@ function LoggedDetailsSummary({ log, onEditClick }) {
           width: '100%',
           boxSizing: 'border-box'
         }}>
-          <span style={{ fontWeight: '700', color: 'var(--text-slate-light)', display: 'block', marginBottom: '4px', fontSize: '11px' }}>備註</span>
+          <span style={{ fontWeight: '700', color: 'var(--text-slate-light)', display: 'block', marginBottom: '4px', fontSize: '12.5px' }}>備註</span>
           {log.notes}
         </div>
       )}
@@ -247,6 +248,28 @@ export default function App() {
     setIsDrawerOpen(false);
   };
 
+  const handleBatchSavePeriod = (dateStrings) => {
+    const updatedLogs = { ...logs };
+    dateStrings.forEach(dateStr => {
+      const existing = updatedLogs[dateStr] || {
+        flow: 'none',
+        spotting: false,
+        symptoms: [],
+        medications: [],
+        mucus: 'none',
+        temp: '',
+        tempUnit: 'C',
+        intercourse: 'none',
+        notes: ''
+      };
+      updatedLogs[dateStr] = {
+        ...existing,
+        flow: 'medium'
+      };
+    });
+    saveLogs(updatedLogs);
+  };
+
   // 6. Settings action handlers
   const handleClearAllData = () => {
     if (confirm('確定要清除所有生理期紀錄嗎？此動作無法復原。')) {
@@ -319,6 +342,7 @@ export default function App() {
             currentDateStr={todayStr}
             selectedDateStr={selectedDate}
             onDateSelect={handleDateSelect}
+            onBatchSavePeriod={handleBatchSavePeriod}
             logs={logs}
             stats={stats}
           />
@@ -329,7 +353,7 @@ export default function App() {
               <h3 className="status-title">
                 {selDateTitle}
               </h3>
-              <p style={{ fontSize: '13px', color: 'var(--text-slate-light)', marginBottom: '16px', lineHeight: '1.6', whiteSpace: 'pre-line' }}>
+              <p style={{ fontSize: '14.5px', color: 'var(--text-slate-light)', marginBottom: '16px', lineHeight: '1.6', whiteSpace: 'pre-line' }}>
                 生理階段：{summarySelected.phaseName}。{"\n"}{summarySelected.summary}
               </p>
               
@@ -353,13 +377,17 @@ export default function App() {
         <Insights logs={logs} stats={stats} />
       )}
 
+      {activeTab === 'knowledge' && (
+        <Knowledge />
+      )}
+
       {activeTab === 'settings' && (
         <div className="insights-container">
           <h2 className="section-title">設定與備份</h2>
           
           <div className="insight-card-full">
             <h3 className="card-title" style={{ marginBottom: '8px' }}>資料隱私與安全性</h3>
-            <p style={{ fontSize: '13px', color: 'var(--text-slate-light)', lineHeight: '1.6' }}>
+            <p style={{ fontSize: '14.5px', color: 'var(--text-slate-light)', lineHeight: '1.6' }}>
               LunaFlow 重視您的個人私密健康數據。本軟體不設遠端伺服器，**所有紀錄均儲存在您目前的手機或電腦瀏覽器 (LocalStorage) 中**，不會上傳至任何雲端。清除瀏覽器快取或重設手機瀏覽器可能會清除此數據，建議定期下載進行備份。
             </p>
           </div>
@@ -368,34 +396,64 @@ export default function App() {
             <h3 className="card-title">備份與移轉</h3>
             
             <button className="btn-secondary" onClick={handleExportData} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+              <svg 
+                width="18" 
+                height="18" 
+                viewBox="0 0 24 24" 
+                fill="none" 
+                stroke="currentColor" 
+                strokeWidth="2" 
+                strokeLinecap="round" 
+                strokeLinejoin="round"
+              >
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                <polyline points="7 10 12 15 17 10" />
+                <line x1="12" y1="15" x2="12" y2="3" />
+              </svg>
               <span>下載備份資料 (JSON)</span>
             </button>
             
             <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-              <span style={{ fontSize: '12px', fontWeight: '600', color: 'var(--text-slate-light)' }}>
-                匯入備份資料
-              </span>
+              <label 
+                htmlFor="backup-file-input" 
+                className="btn-secondary" 
+                style={{ 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  justifyContent: 'center', 
+                  gap: '8px',
+                  cursor: 'pointer'
+                }}
+              >
+                <svg 
+                  width="18" 
+                  height="18" 
+                  viewBox="0 0 24 24" 
+                  fill="none" 
+                  stroke="currentColor" 
+                  strokeWidth="2" 
+                  strokeLinecap="round" 
+                  strokeLinejoin="round"
+                >
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                  <polyline points="17 8 12 3 7 8" />
+                  <line x1="12" y1="3" x2="12" y2="15" />
+                </svg>
+                <span>匯入備份資料 (JSON)</span>
+              </label>
               <input 
+                id="backup-file-input"
                 type="file" 
                 accept=".json" 
                 onChange={handleImportData}
-                style={{
-                  width: '100%',
-                  fontSize: '12px',
-                  fontFamily: 'var(--font-family)',
-                  color: 'var(--text-slate)',
-                  border: '1px solid var(--panel-border)',
-                  padding: '8px',
-                  borderRadius: '12px',
-                  background: 'rgba(255, 255, 255, 0.4)'
-                }}
+                style={{ display: 'none' }}
               />
             </div>
           </div>
 
           <div className="insight-card-full" style={{ borderColor: 'rgba(91,99,122,0.3)' }}>
             <h3 className="card-title" style={{ color: 'var(--text-slate)', marginBottom: '8px' }}>危險操作</h3>
-            <p style={{ fontSize: '12px', color: 'var(--text-slate-light)', marginBottom: '14px' }}>
+            <p style={{ fontSize: '13.5px', color: 'var(--text-slate-light)', marginBottom: '14px' }}>
               此動作將永久刪除您儲存在此裝置上的所有月經記錄，此操作無法復原。
             </p>
             <button 
@@ -422,7 +480,7 @@ export default function App() {
                 boxShadow: '0 4px 12px rgba(91, 99, 122, 0.1)' 
               }} 
             />
-            <span style={{ fontSize: '11px', color: 'var(--text-slate-muted)', fontWeight: '600' }}>
+            <span style={{ fontSize: '12.5px', color: 'var(--text-slate-muted)', fontWeight: '600' }}>
               LunaFlow 經期日誌 v1.0.0
             </span>
           </div>
@@ -447,7 +505,7 @@ export default function App() {
           className={`nav-tab ${activeTab === 'calendar' ? 'nav-tab-active' : ''}`}
           onClick={() => setActiveTab('calendar')}
         >
-          <CalendarIcon size={20} />
+          <CalendarIcon size={20} active={activeTab === 'calendar'} />
           <span>月曆</span>
         </button>
         
@@ -455,28 +513,23 @@ export default function App() {
           className={`nav-tab ${activeTab === 'insights' ? 'nav-tab-active' : ''}`}
           onClick={() => setActiveTab('insights')}
         >
-          <InsightsIcon size={20} />
+          <InsightsIcon size={20} active={activeTab === 'insights'} />
           <span>趨勢</span>
+        </button>
+
+        <button 
+          className={`nav-tab ${activeTab === 'knowledge' ? 'nav-tab-active' : ''}`}
+          onClick={() => setActiveTab('knowledge')}
+        >
+          <CrescentIcon size={20} active={activeTab === 'knowledge'} />
+          <span>月知識</span>
         </button>
         
         <button 
           className={`nav-tab ${activeTab === 'settings' ? 'nav-tab-active' : ''}`}
           onClick={() => setActiveTab('settings')}
         >
-          {/* Using LogIcon for settings or we can use custom SVG inline gear */}
-          <svg 
-            width="20" 
-            height="20" 
-            viewBox="0 0 24 24" 
-            fill="none" 
-            stroke="currentColor" 
-            strokeWidth="2" 
-            strokeLinecap="round" 
-            strokeLinejoin="round"
-          >
-            <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.1a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" />
-            <circle cx="12" cy="12" r="3" />
-          </svg>
+          <GearIcon size={20} active={activeTab === 'settings'} />
           <span>設定</span>
         </button>
       </nav>

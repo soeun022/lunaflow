@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { ChevronLeftIcon, ChevronRightIcon } from './SvgIcons';
 import { formatDate, getDayStatus } from '../utils/cycleCalculator';
 
@@ -6,6 +6,7 @@ export default function Calendar({
   currentDateStr, 
   onDateSelect, 
   selectedDateStr, 
+  onBatchSavePeriod,
   logs, 
   stats 
 }) {
@@ -25,6 +26,91 @@ export default function Calendar({
 
   // Get weekday of the 1st day of the month (0 = Sun, 6 = Sat)
   const firstDayIndex = new Date(year, month, 1).getDay();
+
+  // Gesture selection states & refs
+  const [selectedDates, setSelectedDates] = useState([]);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+
+  const isSelectingRef = useRef(false);
+  const selectedDatesRef = useRef([]);
+  const anchorDateRef = useRef(null);       // The date where long press started
+  const longPressTimerRef = useRef(null);
+  const lastHoverDateRef = useRef(null);    // Last date the pointer was over (to avoid redundant updates)
+  const touchStartCoordsRef = useRef({ x: 0, y: 0 });
+  const wasSelectingRef = useRef(false);
+  const daysGridRef = useRef(null);         // Ref to the days-grid div for non-passive touch listener
+
+  // Helper: compute all dates between two dates (inclusive), sorted chronologically
+  const getDateRange = (dateStrA, dateStrB) => {
+    const a = new Date(dateStrA + 'T00:00:00');
+    const b = new Date(dateStrB + 'T00:00:00');
+    const start = a <= b ? a : b;
+    const end = a <= b ? b : a;
+    const range = [];
+    const cur = new Date(start);
+    while (cur <= end) {
+      range.push(formatDate(cur));
+      cur.setDate(cur.getDate() + 1);
+    }
+    return range;
+  };
+
+  // Central handler: update selection to the range from anchor to hoverDate
+  const updateSelectionRange = (hoverDate) => {
+    if (!anchorDateRef.current || hoverDate === lastHoverDateRef.current) return;
+    lastHoverDateRef.current = hoverDate;
+    const range = getDateRange(anchorDateRef.current, hoverDate);
+    selectedDatesRef.current = range;
+    setSelectedDates(range);
+  };
+
+  // Global mouseup / touchend listener to safely terminate dragging gestures
+  useEffect(() => {
+    const handleGlobalRelease = () => {
+      if (longPressTimerRef.current) {
+        clearTimeout(longPressTimerRef.current);
+        longPressTimerRef.current = null;
+      }
+      
+      if (isSelectingRef.current) {
+        isSelectingRef.current = false;
+        wasSelectingRef.current = true;
+        
+        // Wait a tiny bit to clear wasSelectingRef so click event handler can consume it
+        setTimeout(() => {
+          wasSelectingRef.current = false;
+        }, 150);
+
+        if (selectedDatesRef.current.length > 0) {
+          setShowConfirmModal(true);
+        }
+      }
+    };
+
+    window.addEventListener('mouseup', handleGlobalRelease);
+    window.addEventListener('touchend', handleGlobalRelease);
+    return () => {
+      window.removeEventListener('mouseup', handleGlobalRelease);
+      window.removeEventListener('touchend', handleGlobalRelease);
+    };
+  }, []);
+
+  // Non-passive touchmove listener on the grid to prevent iOS scroll during drag selection
+  useEffect(() => {
+    const gridEl = daysGridRef.current;
+    if (!gridEl) return;
+
+    const onGridTouchMove = (e) => {
+      if (isSelectingRef.current && e.cancelable) {
+        e.preventDefault();
+      }
+    };
+
+    gridEl.addEventListener('touchmove', onGridTouchMove, { passive: false });
+    return () => {
+      gridEl.removeEventListener('touchmove', onGridTouchMove, { passive: false });
+    };
+  }, []);
 
   // Handle Navigation actions based on mode
   const handlePrev = () => {
@@ -59,9 +145,138 @@ export default function Calendar({
   const days = Array.from({ length: totalDays }, (_, i) => i + 1);
 
   const handleDayClick = (day) => {
+    // If we just finished a drag selection, bypass standard single tap selection
+    if (wasSelectingRef.current || selectedDates.length > 0) {
+      return;
+    }
     const clickDate = new Date(year, month, day);
     const dateStr = formatDate(clickDate);
     onDateSelect(dateStr);
+  };
+
+  const handleMouseDown = (e, dateStr) => {
+    if (e.button !== 0) return; // Only left click
+    
+    if (longPressTimerRef.current) clearTimeout(longPressTimerRef.current);
+    
+    touchStartCoordsRef.current = { x: e.clientX, y: e.clientY };
+    
+    longPressTimerRef.current = setTimeout(() => {
+      isSelectingRef.current = true;
+      anchorDateRef.current = dateStr;
+      lastHoverDateRef.current = dateStr;
+      selectedDatesRef.current = [dateStr];
+      setSelectedDates([dateStr]);
+      if (navigator.vibrate) {
+        try { navigator.vibrate(50); } catch (err) {}
+      }
+    }, 500);
+  };
+
+  const handleMouseEnter = (dateStr) => {
+    if (isSelectingRef.current) {
+      updateSelectionRange(dateStr);
+    }
+  };
+
+  const handleTouchStart = (e, dateStr) => {
+    if (longPressTimerRef.current) clearTimeout(longPressTimerRef.current);
+    
+    const touch = e.touches[0];
+    touchStartCoordsRef.current = { x: touch.clientX, y: touch.clientY };
+    
+    longPressTimerRef.current = setTimeout(() => {
+      isSelectingRef.current = true;
+      anchorDateRef.current = dateStr;
+      lastHoverDateRef.current = dateStr;
+      selectedDatesRef.current = [dateStr];
+      setSelectedDates([dateStr]);
+      if (navigator.vibrate) {
+        try { navigator.vibrate(50); } catch (err) {}
+      }
+    }, 500);
+  };
+
+  const handleTouchMove = (e) => {
+    const touch = e.touches[0];
+    
+    if (!isSelectingRef.current) {
+      // Check if finger moved too far (scroll cancellation)
+      const dist = Math.hypot(touch.clientX - touchStartCoordsRef.current.x, touch.clientY - touchStartCoordsRef.current.y);
+      if (dist > 12) {
+        if (longPressTimerRef.current) {
+          clearTimeout(longPressTimerRef.current);
+          longPressTimerRef.current = null;
+        }
+      }
+      return;
+    }
+    
+    // Note: scroll prevention is handled by the non-passive native listener on daysGridRef
+    const el = document.elementFromPoint(touch.clientX, touch.clientY);
+    const cell = el?.closest('.day-cell');
+    if (cell) {
+      const hoveredDate = cell.getAttribute('data-date');
+      if (hoveredDate) {
+        updateSelectionRange(hoveredDate);
+      }
+    }
+  };
+
+  const handleConfirmBatch = () => {
+    if (onBatchSavePeriod) {
+      onBatchSavePeriod(selectedDates);
+    }
+    setSelectedDates([]);
+    selectedDatesRef.current = [];
+    setShowConfirmModal(false);
+  };
+
+  const handleCancelBatch = () => {
+    setSelectedDates([]);
+    selectedDatesRef.current = [];
+    setShowConfirmModal(false);
+  };
+
+  const getFormattedSelectedRange = () => {
+    if (selectedDates.length === 0) return '';
+    
+    // Sort dates chronologically
+    const sorted = [...selectedDates].sort((a, b) => new Date(a) - new Date(b));
+    
+    // Convert to readable Chinese format (e.g. 6月25日)
+    const formatDateLabel = (dStr) => {
+      const dObj = new Date(dStr + 'T00:00:00');
+      return `${dObj.getMonth() + 1}月${dObj.getDate()}日`;
+    };
+    
+    if (sorted.length === 1) {
+      return formatDateLabel(sorted[0]);
+    }
+    
+    // Check if range is continuous
+    let isContinuous = true;
+    for (let i = 1; i < sorted.length; i++) {
+      const prev = new Date(sorted[i - 1] + 'T00:00:00');
+      const curr = new Date(sorted[i] + 'T00:00:00');
+      const diffTime = Math.abs(curr - prev);
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      if (diffDays !== 1) {
+        isContinuous = false;
+        break;
+      }
+    }
+    
+    if (isContinuous) {
+      return `${formatDateLabel(sorted[0])} ~ ${formatDateLabel(sorted[sorted.length - 1])} (共 ${sorted.length} 天)`;
+    } else {
+      // Non-continuous: list them or summarize
+      if (sorted.length <= 3) {
+        return sorted.map(d => formatDateLabel(d)).join('、 ');
+      } else {
+        return `${formatDateLabel(sorted[0])} 等共 ${sorted.length} 個日期`;
+      }
+    }
   };
 
   return (
@@ -119,7 +334,7 @@ export default function Calendar({
             </div>
 
             {/* Month View Days Grid */}
-            <div className="days-grid">
+            <div className="days-grid" ref={daysGridRef} onTouchMove={handleTouchMove}>
               {/* Render blank space for padding */}
               {emptyCells.map(cell => (
                 <div key={`empty-${cell}`} className="day-cell day-cell-empty" />
@@ -141,11 +356,14 @@ export default function Calendar({
                 else if (status === 'ovulation') statusClass = 'day-cell-ovulation';
                 else if (status === 'fertile') statusClass = 'day-cell-fertile';
                 
+                const isBatchSelected = selectedDates.includes(dateStr);
+
                 const cellClass = `
                   day-cell 
                   ${statusClass} 
                   ${isToday ? 'day-cell-today' : ''} 
                   ${isSelected ? 'day-cell-selected' : ''}
+                  ${isBatchSelected ? 'day-cell-batch-selected' : ''}
                 `.trim();
 
                 // Detect if logs exist for dot indicators
@@ -162,6 +380,10 @@ export default function Calendar({
                   <button 
                     key={`day-${day}`} 
                     className={cellClass}
+                    data-date={dateStr}
+                    onMouseDown={(e) => handleMouseDown(e, dateStr)}
+                    onMouseEnter={() => handleMouseEnter(dateStr)}
+                    onTouchStart={(e) => handleTouchStart(e, dateStr)}
                     onClick={() => handleDayClick(day)}
                   >
                     {day}
@@ -282,6 +504,29 @@ export default function Calendar({
         </div>
 
       </div>
+
+      {showConfirmModal && (
+        <div className="confirm-modal-overlay">
+          <div className="confirm-modal-content animate-pop">
+            <h3 className="confirm-modal-title">設定為月經期</h3>
+            <p className="confirm-modal-text">
+              您已選取以下日期：
+              <span className="confirm-date-range">{getFormattedSelectedRange()}</span>
+              確定要將這些日期設定為月經期嗎？
+              <br />
+              （經血量將自動預設為「量中」）
+            </p>
+            <div className="confirm-modal-actions">
+              <button className="btn-confirm-cancel" onClick={handleCancelBatch}>
+                取消
+              </button>
+              <button className="btn-confirm-ok" onClick={handleConfirmBatch}>
+                確定
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 }
